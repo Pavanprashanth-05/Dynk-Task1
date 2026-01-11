@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Todo List App</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+
+#frontPage {
+  background: #000;
+  color: #fff;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero {
+  text-align: center;
+  max-width: 600px;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  color: #ccc;
+  margin-bottom: 30px;
+}
+
+.hero span {
+  color: #00e5ff;
+}
+
+.hero button {
+  padding: 15px 35px;
+  background: #00e5ff;
+  border: none;
+  border-radius: 30px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.hero button:hover {
+  background: #00bcd4;
+}
+
+#todoPage {
+  display: none;
+  min-height: 100vh;
+  padding: 40px;
+
+  background: linear-gradient(
+    270deg,
+    rgb(182, 203, 220),
+    rgb(79, 181, 231),
+    rgb(129, 167, 198),
+    rgb(157, 207, 233)
+  );
+
+  background-size: 600% 600%;
+  animation: waveBlue 6s ease infinite;
+}
+
+/* Wave animation */
+@keyframes waveBlue {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
+.container {
+  max-width: 900px;
+  margin: auto;
+}
+
+.container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.input-area {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.input-area input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.input-area button {
+  padding: 12px 25px;
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.lists {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.list-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  flex: 1;
+  min-width: 300px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.completed-box {
+  background: #e8f5e9;
+}
+
+ul {
+  list-style: none;
+  margin-top: 15px;
+}
+
+li {
+  background: #f9f9f9;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+li span {
+  flex: 1;
+}
+
+.actions button {
+  margin-left: 5px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #fff;
+}
+
+.edit { background: #2196f3; }
+.delete { background: #f44336; }
+.complete { background: #4caf50; }
+</style>
+</head>
+
+<body>
+
+<div id="frontPage">
+  <div class="hero">
+    <h1>Hello World 👋</h1>
+    <p>
+      This is a <span>Todo List</span>.<br>
+      You can add your tasks and manage your work properly.
+    </p>
+    <button onclick="startTodo()">Click Here to Make a List</button>
+  </div>
+</div>
+
+<div id="todoPage">
+  <div class="container">
+    <h1>My Todo List</h1>
+
+    <div class="input-area">
+      <input type="text" id="taskInput" placeholder="Enter your task...">
+      <button onclick="addTask()">Add</button>
+    </div>
+
+    <div class="lists">
+      <div class="list-box">
+        <h2>Pending Tasks</h2>
+        <ul id="pendingList"></ul>
+      </div>
+
+      <div class="list-box completed-box">
+        <h2>Completed Tasks</h2>
+        <ul id="completedList"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+function startTodo() {
+  document.getElementById("frontPage").style.display = "none";
+  document.getElementById("todoPage").style.display = "block";
+}
+
+
+const pendingList = document.getElementById("pendingList");
+const completedList = document.getElementById("completedList");
+
+function addTask() {
+  const input = document.getElementById("taskInput");
+  const text = input.value.trim();
+  if (text === "") return;
+
+  const li = document.createElement("li");
+  const span = document.createElement("span");
+  span.textContent = text;
+
+  const actions = document.createElement("div");
+  actions.className = "actions";
+
+  const editBtn = document.createElement("button");
+  editBtn.textContent = "Edit";
+  editBtn.className = "edit";
+  editBtn.onclick = () => {
+    const newText = prompt("Edit task:", span.textContent);
+    if (newText) span.textContent = newText;
+  };
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.textContent = "Delete";
+  deleteBtn.className = "delete";
+  deleteBtn.onclick = () => li.remove();
+
+  const completeBtn = document.createElement("button");
+  completeBtn.textContent = "Complete";
+  completeBtn.className = "complete";
+  completeBtn.onclick = () => {
+    completeBtn.remove();
+    completedList.appendChild(li);
+  };
+
+  actions.append(editBtn, deleteBtn, completeBtn);
+  li.append(span, actions);
+  pendingList.appendChild(li);
+
+  input.value = "";
+}
+</script>
+
+</body>
+</html>
